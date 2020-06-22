@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<schema version="0.3">
+  <table name="rciam_enrollers">
+    <field name="id" type="I">
+      <key />
+      <autoincrement />
+    </field>
+    <field name="co_id" type="I">
+      <constraint>REFERENCES cm_cos(id)</constraint>
+    </field>
+    <field name="status" type="C" size="1"/>
+    <field name="return" type="C" size="50" />
+    <field name="redirect_msg" type="X" size="4000" />
+    <field name="created" type="T" />
+    <field name="modified" type="T" />
+  </table>
+  
+  
+  <table name="rciam_enroller_eofs">
+    <field name="id" type="I">
+      <key />
+      <autoincrement />
+    </field>
+    <field name="co_enrollment_flow_id" type="I">
+      <constraint>REFERENCES cm_co_enrollment_flows(id)</constraint>
+    </field>
+    <field name="rciam_enroller_id" type="I">
+      <constraint>REFERENCES cm_rciam_enrollers(id)</constraint>
+    </field>
+    <field name="mode" type="C" size="1"/>
+    <field name="created" type="T" />
+    <field name="modified" type="T" />
+  </table>
+  
+</schema>
