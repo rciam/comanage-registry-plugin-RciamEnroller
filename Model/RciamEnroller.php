@@ -42,7 +42,7 @@ class RciamEnroller extends AppModel
       'required' => true,
       'message' => 'A valid status must be selected'
     ),
-    'redirect_msg' => array(
+    'nocert_msg' => array(
       'rule' => 'notBlank',
       'required' => false,
       'allowEmpty' => true
@@ -68,7 +68,70 @@ class RciamEnroller extends AppModel
               'action'     => 'configure'))
     );
   }
-  
+
+  /**
+   * @param String $epuid      ePUID identifier
+   * @return array|null        an array with all orgidentities linked to CoPerson with containing models(Identifiers, Name, Cert, CoPersonRole, CO,
+   */
+  public function getCoPersonOrgIdentitiesContain($epuid) {
+      if(empty($epuid)) {
+        return [];
+      }
+
+      $this->OrgIdentity = ClassRegistry::init('OrgIdentity');
+
+      $oargs = array();
+      $oargs['joins'][0]['table'] = 'identifiers';
+      $oargs['joins'][0]['alias'] = 'Identifier';
+      $oargs['joins'][0]['type'] = 'INNER';
+      $oargs['joins'][0]['conditions'][0] = 'CoOrgIdentityLink.org_identity_id=Identifier.org_identity_id';
+      $oargs['conditions']['Identifier.identifier'] = $epuid;
+      $oargs['conditions']['Identifier.login'] = true;
+      // Join on identifiers that aren't deleted (including if they have no status)
+      $oargs['conditions']['OR'][] = 'Identifier.status IS NULL';
+      $oargs['conditions']['OR'][]['Identifier.status <>'] = SuspendableStatusEnum::Suspended;
+      $oargs['contain'] = false;
+      $oargs['fields'] = array('CoOrgIdentityLink.co_person_id');
+
+      $co_people = $this->OrgIdentity->CoOrgIdentityLink->find('all', $oargs);
+      $co_people = empty($co_people) ? array()
+        : array_map(function($a) {
+          return $a['CoOrgIdentityLink']['co_person_id'];
+        }, $co_people );
+      unset($oargs);
+
+      // We use $oargs here instead of $args because we may reuse this below
+      $oargs = array();
+      $oargs['joins'][0]['table'] = 'co_org_identity_links';
+      $oargs['joins'][0]['alias'] = 'CoOrgIdentityLink';
+      $oargs['joins'][0]['type'] = 'INNER';
+      $oargs['joins'][0]['conditions'][0] = 'OrgIdentity.id=CoOrgIdentityLink.org_identity_id';
+      $oargs['conditions']['CoOrgIdentityLink.co_person_id'] = $co_people;
+      // As of v2.0.0, OrgIdentities have validity dates, so only accept valid dates (if specified)
+      // Through the magic of containable behaviors, we can get all the associated
+      $oargs['conditions']['AND'][] = array(
+        'OR' => array(
+          'OrgIdentity.valid_from IS NULL',
+          'OrgIdentity.valid_from < ' => date('Y-m-d H:i:s', time())
+        )
+      );
+      $oargs['conditions']['AND'][] = array(
+        'OR' => array(
+          'OrgIdentity.valid_through IS NULL',
+          'OrgIdentity.valid_through > ' => date('Y-m-d H:i:s', time())
+        )
+      );
+      // data we need in one clever find
+      $oargs['contain'][] = 'PrimaryName';
+      $oargs['contain'][] = 'Identifier';
+      $oargs['contain'][] = 'Cert';
+      $oargs['contain']['CoOrgIdentityLink']['CoPerson'][0] = 'Co';
+      $oargs['contain']['CoOrgIdentityLink']['CoPerson'][1] = 'CoPersonRole';
+      $oargs['contain']['CoOrgIdentityLink']['CoPerson']['CoGroupMember'] = 'CoGroup';
+
+      return $this->OrgIdentity->find('all', $oargs);
+  }
+
   /**
    * @param String $attribute_type cmpEnrollmentAttribute
    * @param String $attribute_value Value of Enrollment Attribute

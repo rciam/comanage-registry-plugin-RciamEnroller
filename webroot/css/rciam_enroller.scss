@@ -1,0 +1,128 @@
+$color-form-background: white;
+$frame-main-pad-nocert: 0;
+
+$frame-width-nocert: 30%;
+$footer-color: white;
+
+$breakpoint-tablet: 740px;
+
+@mixin frame($width, $main-padding) {
+  #banner {
+    box-shadow: none;
+    //margin-bottom: 6%;
+    background-color: $footer-color;
+    @media (min-width: $breakpoint-tablet) {
+      background-color: unset;
+    }
+
+    .mdl-layout__header-row {
+      height: 100%;
+      @media (min-width: $breakpoint-tablet) {
+        background-color: $footer-color;
+        width: $width !important;
+        margin: auto;
+      }
+    }
+  }
+  #main {
+    margin-left: 0 !important;
+    color: black !important;
+    @media (min-width: $breakpoint-tablet) {
+      padding: $main-padding 0 $main-padding 0;
+    }
+
+    #content {
+      background-color: $footer-color;
+      padding: unset;
+
+      .mdl-grid {
+        padding: unset;
+      }
+
+      @media (min-width: $breakpoint-tablet) {
+        width: $width !important;
+        margin: auto;
+      }
+
+      #content-inner {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .fields {
+          .modelbox {
+            overflow-wrap: anywhere;
+            margin: 0.5em 1em 0 1em;
+          }
+        }
+      }
+    }
+  }
+  #customFooter {
+    padding: unset;
+
+    .ssp-footer {
+      @media (min-width: $breakpoint-tablet) {
+        width: $width !important;
+        margin: auto;
+      }
+
+      .mdl-grid {
+        justify-content: center;
+      }
+
+      background-color: $footer-color;
+      padding: unset;
+    }
+  }
+}
+
+
+/*
+ CSS Body
+*/
+
+.mdl-layout__content {
+  margin-left: 0 !important;
+}
+
+// todo: Remove in the future, asap we merge the PR
+#navigation-drawer {
+  display: none;
+}
+
+// todo: Remove in the future
+#breadcrumbs {
+  display: none;
+}
+
+// todo: Remove in the future
+#user-menu {
+  display: none;
+}
+
+@media (min-width: 740px) {
+  #comanage-wrapper {
+    min-height: 95vh;
+  }
+}
+
+@media (max-width: 739px) {
+  #comanage-wrapper {
+    min-height: unset;
+  }
+}
+
+.rciam_enrollers.nocert {
+  @include frame($frame-width-nocert, $frame-main-pad-nocert);
+
+  .field-info {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .ui-icon {
+    background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
+  }
+}

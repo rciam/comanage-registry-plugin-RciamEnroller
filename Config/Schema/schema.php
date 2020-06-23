@@ -74,7 +74,7 @@ class AppSchema extends CakeSchema
     'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
     'co_id' => array('type' => 'integer', 'null' => true, 'default' => null),
     'status' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 1),
-    'redirect_msg' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
+    'nocert_msg' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
     'return' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
@@ -97,15 +97,3 @@ class AppSchema extends CakeSchema
     'tableParameters' => array()
   );
 }
-
-
-/**
-
-// Console/cake schema create --file schema.php --path /srv/comanage/registry-current/local/Plugin/RciamEnroller/Config/Schema
-
-ALTER TABLE ONLY public.cm_rciam_enrollers ADD CONSTRAINT cm_rciam_enrollers_co_id_fkey FOREIGN KEY (co_id) REFERENCES public.cm_cos(id);
-
-ALTER TABLE ONLY public.cm_rciam_enroller_eofs ADD CONSTRAINT cm_rciam_enroller_eofs_rciam_enroller_id_fkey FOREIGN KEY (rciam_enroller_id) REFERENCES public.cm_rciam_enrollers(id);
-ALTER TABLE ONLY public.cm_rciam_enroller_eofs ADD CONSTRAINT cm_rciam_enroller_eofs_co_enrollment_flow_id_fkey FOREIGN KEY (co_enrollment_flow_id) REFERENCES public.cm_co_enrollment_flows(id);
-
- */

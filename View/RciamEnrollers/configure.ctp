@@ -325,7 +325,7 @@ if (!$e) {
             <table id="enrollment_flows_list_tb" class="eofsTable">
               <thead>
               <th>
-                <strong><label>Name:</label></strong>
+                <strong><label><?php print _txt('pl.rciam_enroller.name_lbl'); ?></label></strong>
                 <select id="enrollments_list"/>
               </th>
               <th>
@@ -338,27 +338,27 @@ if (!$e) {
         </div>
     </div>
   </li>
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.intro'));?>" class="field-stack">
+  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.nocert_msg'));?>" class="field-stack">
     <div class="field-name">
       <div class="field-title">
-        <?php print _txt('pl.rciam_enroller.intro'); ?>
+        <?php print _txt('pl.rciam_enroller.nocert_msg'); ?>
       </div>
-      <div class="field-desc"><?php print _txt('pl.rciam_enroller.intro.desc'); ?></div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.nocert_msg.desc'); ?></div>
     </div>
     <div class="field-info">
       <?php
-        $intro = empty($rciam_enrollers['RciamEnroller']['redirect_msg']) ? ""
-                : filter_var($rciam_enrollers['RciamEnroller']['redirect_msg'],FILTER_SANITIZE_SPECIAL_CHARS);
-        print $this->Form->textarea('RciamEnroller.redirect_msg', array('size' => 4000, 'value' => $intro));
+        $intro = empty($rciam_enrollers['RciamEnroller']['nocert_msg']) ? ""
+                : filter_var($rciam_enrollers['RciamEnroller']['nocert_msg'],FILTER_SANITIZE_SPECIAL_CHARS);
+        print $this->Form->textarea('RciamEnroller.nocert_msg', array('size' => 4000, 'value' => $intro));
       ?>
     </div>
   </li>
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.return'));?>">
+  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.return_target'));?>">
     <div class="field-name">
       <div class="field-title">
-        <?php print _txt('pl.rciam_enroller.return'); ?>
+        <?php print _txt('pl.rciam_enroller.return_target'); ?>
       </div>
-      <div class="field-desc"><?php print _txt('pl.rciam_enroller.return.desc'); ?></div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.return_target.desc'); ?></div>
     </div>
     <div class="field-info">
       <?php

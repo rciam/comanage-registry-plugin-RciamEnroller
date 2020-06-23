@@ -13,6 +13,7 @@ $cm_rciam_enroller_texts['en_US'] = array(
   // Error messages
   'er.rciam_enroller.search'                   => 'Search request returned %1$s',
   'er.rciam_enroller.no_remote_user'           => 'Remote User was empty.',
+  'er.rciam_enroller.no_cert'                  => 'No Linked Certificate.',
   // Plugin text
   'pl.rciam_enroller.co_name'                  => 'CO Name',
   'pl.rciam_enroller.co_name.desc'             => 'This is the CO Name the enroller plugin belongs to',
@@ -21,10 +22,12 @@ $cm_rciam_enroller_texts['en_US'] = array(
   'pl.rciam_enroller.attribute'                => 'Attribute',
   'pl.rciam_enroller.attribute.desc'           => 'This attribute will be checked for duplicates',
   'pl.rciam_enroller.available_users'          => 'Available Users',
-  'pl.rciam_enroller.intro'                    => 'Introduction',
-  'pl.rciam_enroller.intro.desc'               => 'Optional text to display at the top of the CO Person selection page',
-  'pl.rciam_enroller.return'                   => 'Return parameter',
-  'pl.rciam_enroller.return.desc'              => 'This is the return query parameter with the Service URL. At the end of linking we will redirect at the url stored in this parameter.',
+  'pl.rciam_enroller.nocert_msg'               => 'Info Message-Cert',
+  'pl.rciam_enroller.nocert_msg.desc'          => 'Optional text to display if no Certificate is available.',
+  'pl.rciam_enroller.return_target'            => 'Return parameter',
+  'pl.rciam_enroller.return_target.desc'       => 'This is the return query parameter with the Service URL. At the end of linking we will redirect at the url stored in this parameter.',
+  'pl.rciam_enroller.return'                   => 'Return',
+  'pl.rciam_enroller.name_lbl'                 => 'Name:',
 
   // Database
   'rs.rciam_enroller.error'                    => 'Save failed',

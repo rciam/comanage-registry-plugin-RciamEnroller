@@ -17,13 +17,22 @@ class RciamEnrollersController extends StandardController
   );
   
   /**
-   * Update a RciamEnroller.
+   * Configure RciamEnroller.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    */
   public function configure() {
     $configData = $this->RciamEnroller->getConfiguration($this->cur_co['Co']['id']);
     $id = isset($configData['RciamEnroller']) ? $configData['RciamEnroller']['id'] : -1;
+
+    // Get the name of the current CO
+    $args = array();
+    $args['conditions']['Co.id'] = $this->request->params['named']['co'];
+    $args['fields'] = array('Co.id', 'Co.name');
+    $args['contain'] = false;
+
+    $vv_co_list = $this->Co->find('list', $args);
+    $this->set('vv_co_list', $vv_co_list);
     
     if($this->request->is('post')) {
       // We're processing an update
@@ -80,25 +89,49 @@ class RciamEnrollersController extends StandardController
       $this->set('rciam_enrollers', $configData);
     }
   }
-  
+
+
+  /**
+   * No Certificate User message
+   *
+   * @since  COmanage Registry v3.1.0
+   */
+  public function nocert() {
+    $configData = $this->RciamEnroller->getConfiguration($this->cur_co['Co']['id']);
+    $redirect_final = '/';
+    // Create the route to user's profile and redirect
+    if(!empty($_SESSION["Auth"]["User"]["co_person_id"])) {
+      $redirect_final = [
+        'controller' => 'co_people',
+        'plugin' => '',
+        'action' => 'canvas',
+        $_SESSION["Auth"]["User"]["co_person_id"],
+      ];
+    }
+    if (empty($configData["RciamEnroller"]["nocert_msg"])) {
+      $this->Flash->set(_txt('er.rciam_enroller.no_cert', array(_txt('ct.rciam_enrollers.2'))), array('key' => 'error'));
+      // If no CO Person ID in the Session redirect to root
+      $this->redirect($redirect_final);
+    }
+
+    $this->set('vv_nocert_msg', $configData["RciamEnroller"]["nocert_msg"]);
+    $this->set('vv_redirect_final', Router::url($redirect_final));
+  }
+
+  /**
+   *
+   */
   public function beforeRender()
   {
-    if($this->request->params['action'] == 'configure'){
-      // Get the name of the current CO
-      $args = array();
-      $args['conditions']['Co.id'] = $this->request->params['named']['co'];
-      $args['fields'] = array('Co.id', 'Co.name');
-      $args['contain'] = false;
-  
-      $vv_co_list = $this->Co->find('list', $args);
-
-      $this->set('vv_co_list', $vv_co_list);
-    }
-    list($cmp_list, $shibSession['cmp_attributes_list']) = $this->RciamEnroller->getAttrValues();
-    $this->set('vv_cmp_attributes_list', $cmp_list);
     parent::beforeRender();
   }
-  
+
+  /**
+   * @param $reqdata
+   * @param null $curdata
+   * @param null $origdata
+   * @return bool
+   */
   function checkWriteFollowups($reqdata, $curdata = NULL, $origdata = NULL) {
     $this->Flash->set(_txt('rs.updated-a3', array(_txt('ct.rciam_enrollers.2'))), array('key' => 'success'));
     return true;
@@ -122,7 +155,7 @@ class RciamEnrollersController extends StandardController
   
     // Determine what operations this user can perform
     $p['configure'] = ($roles['cmadmin'] || $roles['coadmin']);
-    $p['link'] = true;
+    $p['nocert'] = true;
     $p['logout'] = true;
     $this->set('permissions', $p);
     
@@ -136,7 +169,7 @@ class RciamEnrollersController extends StandardController
    */
   public function parseCOID($data = null) {
     if($this->action === 'configure'
-       || $this->action === 'link'
+       || $this->action === 'nocert'
           || $this->action === 'logout') {
       if(isset($this->request->params['named']['co'])) {
         return $this->request->params['named']['co'];

@@ -10,7 +10,7 @@
     </field>
     <field name="status" type="C" size="1"/>
     <field name="return" type="C" size="50" />
-    <field name="redirect_msg" type="X" size="4000" />
+    <field name="nocert_msg" type="X" size="4000" />
     <field name="created" type="T" />
     <field name="modified" type="T" />
   </table>

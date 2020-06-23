@@ -5,7 +5,7 @@
  */
 
 Router::mapResources(array(
-  'rciam_enroller_eofs'
+  'rciam_enrollers'
 ));
 Router::parseExtensions();
 
