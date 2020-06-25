@@ -55,7 +55,7 @@ class RciamEnrollersController extends StandardController
           'atomic' => true,
           'provisioning' => false,
         );
-        
+
         if($this->RciamEnroller->save($this->request->data, $save_options)){
           $this->Flash->set(_txt('rs.saved'), array('key' => 'success'));
         } else {

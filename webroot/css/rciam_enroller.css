@@ -5,26 +5,26 @@
   margin-left: 0 !important;
 }
 
-#navigation-drawer {
-  display: none;
-}
-
-#breadcrumbs {
-  display: none;
-}
-
-#user-menu {
-  display: none;
-}
-
-@media (min-width: 740px) {
-  #comanage-wrapper {
-    min-height: 95vh;
-  }
-}
 @media (max-width: 739px) {
   #comanage-wrapper {
     min-height: unset;
+  }
+}
+.rciam_enrollers.nocert #navigation-drawer {
+  display: none;
+}
+.rciam_enrollers.nocert #breadcrumbs {
+  display: none;
+}
+.rciam_enrollers.nocert #user-menu {
+  display: none;
+}
+.rciam_enrollers.nocert #user-defined-links-top {
+  display: none;
+}
+@media (min-width: 740px) {
+  .rciam_enrollers.nocert #comanage-wrapper {
+    min-height: 95vh;
   }
 }
 .rciam_enrollers.nocert #banner {
@@ -98,8 +98,47 @@
   align-content: center;
   justify-content: center;
 }
+.rciam_enrollers.nocert #return-btn:hover {
+  background: #0067B1;
+  color: white;
+  border-color: #0067B1;
+}
 .rciam_enrollers.nocert .ui-icon {
   background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
+}
+
+.rciam_enrollers.configure table {
+  width: 105%;
+}
+.rciam_enrollers.configure table th, .rciam_enrollers.configure table td {
+  background: white;
+  color: black;
+}
+.rciam_enrollers.configure #eof_list_btn {
+  background-color: green;
+  color: white;
+  width: 80px;
+}
+.rciam_enrollers.configure #eof_list_btn:hover {
+  background-color: white;
+  border-color: green;
+  color: green;
+}
+.rciam_enrollers.configure .deletebutton {
+  background-color: #cd0a0a;
+  color: white;
+  width: 80px;
+}
+.rciam_enrollers.configure .deletebutton .ui-button-icon.ui-icon {
+  background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
+}
+.rciam_enrollers.configure .deletebutton:hover {
+  background-color: white;
+  border-color: #cd0a0a;
+  color: #cd0a0a;
+}
+.rciam_enrollers.configure .deletebutton:hover .ui-button-icon.ui-icon {
+  background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_cd0a0a_256x240.png");
 }
 
 /*# sourceMappingURL=rciam_enroller.css.map */

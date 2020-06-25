@@ -28,10 +28,11 @@ $cm_rciam_enroller_texts['en_US'] = array(
   'pl.rciam_enroller.return_target.desc'       => 'This is the return query parameter with the Service URL. At the end of linking we will redirect at the url stored in this parameter.',
   'pl.rciam_enroller.return'                   => 'Return',
   'pl.rciam_enroller.name_lbl'                 => 'Name:',
+  'pl.rciam_enroller.action_lbl'               => 'Actions:',
 
   // Database
   'rs.rciam_enroller.error'                    => 'Save failed',
-  'rs.link_org_identity_eof.deleted'           => 'Entry Deleted',
+  'rs.rciam_enroller_eof.deleted'              => 'Entry Deleted',
 
   
   'fd.rciam_enroller.user'                     => 'User',

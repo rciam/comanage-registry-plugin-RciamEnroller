@@ -66,6 +66,12 @@ class AppSchema extends CakeSchema
           $RciamEnrollerEof->query("ALTER TABLE ONLY public.cm_rciam_enroller_eofs ADD CONSTRAINT cm_rciam_enroller_eofs_rciam_enroller_id_fkey FOREIGN KEY (rciam_enroller_id) REFERENCES public.cm_rciam_enrollers(id);");
           $RciamEnrollerEof->query("ALTER TABLE ONLY public.cm_rciam_enroller_eofs ADD CONSTRAINT cm_rciam_enroller_eofs_co_enrollment_flow_id_fkey FOREIGN KEY (co_enrollment_flow_id) REFERENCES public.cm_co_enrollment_flows(id);");
           break;
+        case 'rciam_enroller_actions':
+          $RciamEnrollerAction = ClassRegistry::init('RciamEnroller.RciamEnrollerAction');
+          $RciamEnrollerAction->useDbConfig = $this->connection;
+          // Add the constraints or any other initializations
+          $RciamEnrollerAction->query("ALTER TABLE ONLY public.cm_rciam_enroller_actions ADD CONSTRAINT cm_rciam_enroller_actions_rciam_enroller_id_fkey FOREIGN KEY (rciam_enroller_eof_id) REFERENCES public.cm_rciam_enroller_eofs(id) on delete cascade;");
+          break;
       }
     }
   }
@@ -89,6 +95,18 @@ class AppSchema extends CakeSchema
     'co_enrollment_flow_id' => array('type' => 'integer', 'null' => false, 'default' => null),
     'rciam_enroller_id' => array('type' => 'integer', 'null' => true, 'default' => null),
     'mode' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 1),
+    'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+    'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
+    'indexes' => array(
+      'PRIMARY' => array('unique' => true, 'column' => 'id')
+    ),
+    'tableParameters' => array()
+  );
+
+  public $rciam_enroller_actions = array(
+    'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
+    'rciam_enroller_eof_id' => array('type' => 'integer', 'null' => true, 'default' => null),
+    'type' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 2),
     'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'indexes' => array(

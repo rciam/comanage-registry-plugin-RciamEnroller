@@ -24,9 +24,8 @@ class RciamEnrollerEofsController extends StandardController
   
   public $uses = array(
     "RciamEnroller.RciamEnroller",
-    "RciamEnroller.RciamSourceBackend",
     "CoEnrollmentFlow",
-    "RciamEnrollerEof",
+    "RciamEnroller.RciamEnrollerEof",
     "Co",
   );
   
@@ -38,19 +37,33 @@ class RciamEnrollerEofsController extends StandardController
     $this->autoRender = false; // We don't render a view in this example
     $this->request->onlyAllow('ajax'); // No direct access via browser URL
     
-    if( $this->request->is('ajax') && $this->request->is('post') ) {
+    if( !empty($this->request->data)
+        && $this->request->is('ajax')
+        && $this->request->is('post')) {
       $this->layout=null;
-      $data = array();
-      $data['RciamEnrollerEof'] = $this->request->data;
-      if ($this->RciamEnrollerEof->save($data)) {
+      $save_options = array(
+        'atomic'       => true, // if true transaction is handled by the framework
+        'validate'     => 'first',
+        'provisioning' => false
+      );
+      if ($this->RciamEnrollerEof->saveAssociated($this->request->data,  $save_options)) {
         // Set a session flash message and redirect.
-        $this->CoEnrollmentFlow->id = $this->request->data['co_enrollment_flow_id'];
+        $this->CoEnrollmentFlow->id = $this->request->data["RciamEnrollerEof"]["co_enrollment_flow_id"];
         $resp_data = array(
           'id' => $this->RciamEnrollerEof->id,
           'eof_name' => $this->CoEnrollmentFlow->field('name'),
         );
         $this->response->type('json');
         $this->response->statusCode(201);
+        $this->response->body(json_encode($resp_data));
+        return $this->response;
+      } else {
+        // todo: move this into a ctp file
+        $resp_data = array(
+          'msg' => 'Save failed',
+        );
+        $this->response->type('json');
+        $this->response->statusCode(500);
         $this->response->body(json_encode($resp_data));
         return $this->response;
       }
@@ -63,8 +76,9 @@ class RciamEnrollerEofsController extends StandardController
     $this->request->onlyAllow('ajax'); // No direct access via browser URL
     $id = !empty($id) ? $id : $this->request->data['id'];
   
-    if( $this->request->is('ajax') && $this->request->is('delete') ) {
-      if( $this->RciamEnrollerEof->delete($id)) {
+    if( $this->request->is('ajax')
+        && $this->request->is('delete')
+        && $this->RciamEnrollerEof->delete($id)) {
         $resp_data = array(
           'id' => $id,
         );
@@ -72,7 +86,6 @@ class RciamEnrollerEofsController extends StandardController
         $this->response->statusCode(200);
         $this->response->body(json_encode($resp_data));
         return $this->response;
-      }
     }
   }
   

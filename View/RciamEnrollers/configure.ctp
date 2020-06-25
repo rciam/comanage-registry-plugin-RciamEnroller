@@ -57,6 +57,8 @@ if (!$e) {
   $vv_enable_eofs_save = false;
 }
 
+print $this->Html->css('/RciamEnroller/css/rciam_enroller');
+
 ?>
 <script type="text/javascript">
     // Generate flash notifications for messages

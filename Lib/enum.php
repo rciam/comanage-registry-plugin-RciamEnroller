@@ -10,3 +10,13 @@ class RciamStatusEnum
   );
 }
 
+class RciamActionsEnum
+{
+  const LinkedCertificate = 'LC';
+  const actions = array(
+    'LC' => 'Linked Certificate',
+  );
+}
+
+?>
+

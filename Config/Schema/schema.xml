@@ -32,4 +32,17 @@
     <field name="modified" type="T" />
   </table>
   
+  <table name="rciam_enroller_actions">
+    <field name="id" type="I">
+      <key />
+      <autoincrement />
+    </field>
+    <field name="rciam_enroller_eof_id" type="I">
+      <constraint>REFERENCES cm_rciam_enrollers(id)</constraint>
+    </field>
+    <field name="type" type="C" size="2"/>
+    <field name="created" type="T" />
+    <field name="modified" type="T" />
+  </table>
+
 </schema>

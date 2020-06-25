@@ -8,7 +8,7 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
 {
   // Class name, used by Cake
   public $name = "RciamEnrollerCoPetitions";
-  public $in_reauth = false;
+
   public $components = array(
     'Security' => array(
       'csrfUseOnce' => true,
@@ -18,14 +18,8 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
 
   public $uses = array(
     "CoEnrollmentFlow",
-    "OrgIdentity",
-    "CoGroupMember",
-    "CoGroup",
-    "AuthenticationEvent",
-    "CoInvite",
     "CoPetition", // this is mandatory for the enroller plugin
-    "RciamEnroller.RciamEnroller",
-    "RciamEnroller.RciamState");
+    "RciamEnroller.RciamEnroller");
 
   /**
    * Enrollment Flow selectOrgIdentity (authenticate mode)
@@ -67,8 +61,8 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
      * 3. The EOF that invoked the plugin is not part of the list picked EOFs
      */
     if (empty($loiecfg['RciamEnrollerEof_list'])
-      || !array_key_exists($this->request->params['named']['coef'], $loiecfg['RciamEnrollerEof_list'])
-      || $loiecfg['RciamEnroller']['status'] != RciamStatusEnum::Active) {
+        || !array_key_exists($this->request->params['named']['coef'], $loiecfg['RciamEnrollerEof_list'])
+        || $loiecfg['RciamEnroller']['status'] != RciamStatusEnum::Active) {
       $this->log(__METHOD__ . "::Plugin is not supported for this enrollment ", LOG_DEBUG);
       $this->redirect($onFinish);
     }
@@ -77,7 +71,7 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
 
     // if there are no registered users continue with the enrollment
     if (empty($orgIdentities)
-      && $eof_ea["CoEnrollmentFlow"]["authz_level"] === EnrollmentAuthzEnum::AuthUser) {
+        && $eof_ea["CoEnrollmentFlow"]["authz_level"] === EnrollmentAuthzEnum::AuthUser) {
       // todo: This user has no orgIdentities. If the EOf is not for Authenticated users redirect to signup
       // todo: Add as target new the current eof. Perhaps this will solve the problem of registering users to EGI first and then to COU
       // Current petition add to query target
@@ -94,19 +88,25 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
       $this->redirect($fullBsUrl . '/registry/signup?target_new=' . urlencode($fullBsUrl . $target_new));
     }
 
-    // fixme: Now we apply logic only for the the subject DN In the future we will define actions. Then we should filter
-    // by action
+    // Get Enrollment Flows Actions
+    $eof_actions = $loiecfg["RciamEnrollerAction_list"][$loiecfg["RciamEnrollerEof_list"][$this->request->params['named']['coef']]];
+    if(empty($eof_actions)) {
+      $this->redirect($onFinish);
+    }
+
     // Certificate Action
-    $certificates = Hash::extract($orgIdentities, '{n}.Cert.{n}.subject');
-    if (empty($certificates)) {
-      // Redirect to modal page
-      $nocert_redirect = [
-        'controller' => 'rciam_enrollers',
-        'plugin' => Inflector::singularize(Inflector::tableize($this->plugin)),
-        'action' => 'nocert',
-        'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
-      ];
-      $this->redirect($nocert_redirect);
+    if($eof_actions === RciamActionsEnum::LinkedCertificate) {
+      $certificates = Hash::extract($orgIdentities, '{n}.Cert.{n}.subject');
+      if (empty($certificates)) {
+        // Redirect to modal page
+        $nocert_redirect = [
+          'controller' => 'rciam_enrollers',
+          'plugin' => Inflector::singularize(Inflector::tableize($this->plugin)),
+          'action' => 'nocert',
+          'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
+        ];
+        $this->redirect($nocert_redirect);
+      }
     }
 
     $this->redirect($onFinish);
@@ -159,7 +159,7 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
       $this->Session->check('Auth.User');
 
     // Probably an account linking being initiated, so we need a valid user
-    $p['selectOrgIdentityAuthenticate'] = $roles['copersonid'] || $this->in_reauth;
+    $p['selectOrgIdentityAuthenticate'] = $roles['copersonid'];
 
     $this->set('permissions', $p);
     return $p[$this->action];

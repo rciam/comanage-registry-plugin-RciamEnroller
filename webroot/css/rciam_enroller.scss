@@ -6,6 +6,12 @@ $footer-color: white;
 
 $breakpoint-tablet: 740px;
 
+$btn-red: #cd0a0a;
+$btn-white: #ffffff;
+$btn-lightblue: #0064b4;
+$btn-blue: #0067B1;
+
+
 @mixin frame($width, $main-padding) {
   #banner {
     box-shadow: none;
@@ -86,27 +92,6 @@ $breakpoint-tablet: 740px;
   margin-left: 0 !important;
 }
 
-// todo: Remove in the future, asap we merge the PR
-#navigation-drawer {
-  display: none;
-}
-
-// todo: Remove in the future
-#breadcrumbs {
-  display: none;
-}
-
-// todo: Remove in the future
-#user-menu {
-  display: none;
-}
-
-@media (min-width: 740px) {
-  #comanage-wrapper {
-    min-height: 95vh;
-  }
-}
-
 @media (max-width: 739px) {
   #comanage-wrapper {
     min-height: unset;
@@ -114,6 +99,31 @@ $breakpoint-tablet: 740px;
 }
 
 .rciam_enrollers.nocert {
+  // todo: Remove in the future, asap we merge the PR
+  #navigation-drawer {
+    display: none;
+  }
+
+  // todo: Remove in the future
+  #breadcrumbs {
+    display: none;
+  }
+
+  // todo: Remove in the future
+  #user-menu {
+    display: none;
+  }
+
+  #user-defined-links-top {
+    display: none;
+  }
+
+  @media (min-width: 740px) {
+    #comanage-wrapper {
+      min-height: 95vh;
+    }
+  }
+
   @include frame($frame-width-nocert, $frame-main-pad-nocert);
 
   .field-info {
@@ -122,7 +132,57 @@ $breakpoint-tablet: 740px;
     justify-content: center;
   }
 
+  #return-btn {
+    &:hover {
+      background: $btn-blue;
+      color: white;
+      border-color: $btn-blue;
+    }
+  }
+
   .ui-icon {
     background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
+  }
+}
+
+.rciam_enrollers.configure {
+  table {
+    width: 105%;
+    th, td {
+      background: white;
+      color: black;
+    }
+  }
+
+  #eof_list_btn {
+    background-color: green;
+    color: white;
+    width: 80px;
+
+    &:hover {
+      background-color: white;
+      border-color: green;
+      color: green;
+    }
+  }
+
+  .deletebutton {
+    background-color: $btn-red;
+    color: white;
+    width: 80px;
+
+    .ui-button-icon.ui-icon {
+      background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
+    }
+
+    &:hover {
+      background-color: white;
+      border-color: $btn-red;
+      color: $btn-red;
+
+      .ui-button-icon.ui-icon {
+        background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_cd0a0a_256x240.png");
+      }
+    }
   }
 }
