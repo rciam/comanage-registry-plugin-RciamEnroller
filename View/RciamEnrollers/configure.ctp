@@ -163,7 +163,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       });
 
         // Enable or disable Addition of EOFs in the list
-        var btn_status = <?php echo $vv_enable_eofs_save?>;
+        let btn_status = <?php echo $vv_enable_eofs_save?>;
         if (btn_status) {
             $('#enrollments_list').removeAttr("disabled");
             $('#eof_list_btn').removeAttr("disabled");
@@ -173,11 +173,18 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         }
 
         // Load the EOFs option list
-        var eof_list_remain = <?php echo json_encode($vv_enrollments_list); ?>;
+        let eof_list_remain = <?php echo json_encode($vv_enrollments_list); ?>;
         $.each(eof_list_remain, function(eof_id, eof_name){
             $('#enrollments_list').append($('<option>', {
                 value: eof_id,
                 text : eof_name
+            }));
+        });
+        let actions_list = <?php echo json_encode(RciamActionsEnum::actions); ?>;
+        $.each(actions_list, function(action_id, action_name){
+            $('#actions_list').append($('<option>', {
+                value: action_id,
+                text : action_name
             }));
         });
         // If the list has no data then show an Empty value
@@ -187,35 +194,42 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         }
         
         // Load the EOF saved list
-        var eof_saved_list = <?php echo json_encode($rciam_enrollers['RciamEnrollerEof']); ?>;
-        var eof_full_list = parseFullEOFList(<?php echo json_encode($vv_full_enrollments_list); ?>);
-        //debugger;
+        let eof_saved_list = <?php echo json_encode($rciam_enrollers['RciamEnrollerEof']); ?>;
+        let eof_full_list = parseFullEOFList(<?php echo json_encode($vv_full_enrollments_list); ?>);
+        let actions_enum_list = <?php echo json_encode(RciamActionsEnum::actions); ?>;
         $.each(eof_saved_list, function(key, value){
-            // TODO: something is happening with the span classes????
             hl_url = '<?php echo $this->Html->url(array(
               'plugin' => null,
               'controller' => 'co_enrollment_flows',
               'action' => 'edit')); ?>' + '/' + value.co_enrollment_flow_id;
+            console.log(actions_enum_list);
             delete_button = '<button type="button" class="deletebutton ui-button ui-corner-all ui-widget" title="Delete" onclick="removeEof(this);">Delete</button>';
             row = "<tr id='" + value.id + "'>" +
                       "<td eof_id='" + value.co_enrollment_flow_id + "'>" +
                           "<a href='" + hl_url + "'>" + eof_full_list[value.co_enrollment_flow_id] + "</a></td>" +
+                       "<td action_eof_value='" + value.RciamEnrollerAction.type + "'>" + actions_enum_list[value.RciamEnrollerAction.type] + "</td>" +
                        "<td>" + delete_button + "</td>" +
                    "</tr>";
             $('#enrollment_flows_list_tb > tbody:last-child').append(row);
         });
         
         $('#eof_list_btn').click(function(){
-            var $eof = $('#enrollments_list option:selected');
+            let $action = $('#actions_list option:selected');
+            action_eof_text = $action.text();
+            action_eof_value = $action.val();
+            let $eof = $('#enrollments_list option:selected');
             eof_text = $eof.text();
             eof_id = $eof.val();
             // The data we will Post to COmanage. We include the token as well.
-            var $eof_data = {
-                _Token: {}
+            let $eof_data = {
+                _Token: {},
+                RciamEnrollerEof: {},
+                RciamEnrollerAction: []
             };
-            $eof_data.co_enrollment_flow_id = eof_id;
-            $eof_data.deleted = 'false';
-            $eof_data.rciam_enroller_id = <?php echo !empty($rciam_enrollers['RciamEnroller']) ?
+            $eof_data.RciamEnrollerAction.push({"type": action_eof_value});
+            $eof_data.RciamEnrollerEof.co_enrollment_flow_id = eof_id;
+            $eof_data.RciamEnrollerEof.deleted = 'false';
+            $eof_data.RciamEnrollerEof.rciam_enroller_id = <?php echo !empty($rciam_enrollers['RciamEnroller']) ?
                                                                  $rciam_enrollers['RciamEnroller']['id'] : -1;?>;
             $eof_data._Token.key = '<?php echo $token_key;?>';
             // Make the ajax call and add the data into your table
@@ -243,6 +257,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
                     row = "<tr id='" + response.id+ "'>" +
                               "<td eof_id='" + eof_id+ "'>" +
                               "<a href='" + hl_url + "'>" + eof_text + "</a></td>" +
+                              "<td action_eof_value='" + action_eof_value+ "'>" + action_eof_text + "</td>" +
                               "<td>" + delete_button + "</td>" +
                            "</tr>";
                     $('#enrollment_flows_list_tb > tbody:last-child').append(row);
@@ -256,7 +271,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
                     generateLinkFlash(response.eof_name + " picked.","success", 2000);
                 },
                 error: function(response) {
-                    generateLinkFlash("EOF pick failed","error", 2000);
+                    generateLinkFlash(response.responseJSON.msg,"error", 2000);
                 }
             });
         });
@@ -326,11 +341,15 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
           <div>
             <table id="enrollment_flows_list_tb" class="eofsTable">
               <thead>
-              <th>
-                <strong><label><?php print _txt('pl.rciam_enroller.name_lbl'); ?></label></strong>
+              <th class="enrollment_flow">
+                <strong><label class="field-title"><?php print _txt('pl.rciam_enroller.name_lbl'); ?></label></strong>
                 <select id="enrollments_list"/>
               </th>
-              <th>
+              <th class="action_eof">
+                <strong><label class="field-title"><?php print _txt('pl.rciam_enroller.action_lbl'); ?></label></strong>
+                <select id="actions_list"/>
+              </th>
+              <th class="action_btn">
                 <input id="eof_list_btn" type="button" value="Add" class="submit-button mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
               </th>
               </thead>
