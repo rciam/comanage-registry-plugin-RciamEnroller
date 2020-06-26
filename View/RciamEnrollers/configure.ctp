@@ -167,9 +167,11 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         if (btn_status) {
             $('#enrollments_list').removeAttr("disabled");
             $('#eof_list_btn').removeAttr("disabled");
+            $('#actions_list').attr("disabled", "disabled");
         } else {
             $('#enrollments_list').attr("disabled", "disabled");
             $('#eof_list_btn').attr("disabled", "disabled");
+            $('#actions_list').attr("disabled", "disabled");
         }
 
         // Load the EOFs option list
