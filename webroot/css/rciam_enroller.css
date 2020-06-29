@@ -1,10 +1,6 @@
 /*
  CSS Body
 */
-.mdl-layout__content {
-  margin-left: 0 !important;
-}
-
 @media (max-width: 739px) {
   #comanage-wrapper {
     min-height: unset;
@@ -26,6 +22,9 @@
   .rciam_enrollers.nocert #comanage-wrapper {
     min-height: 95vh;
   }
+}
+.rciam_enrollers.nocert .mdl-layout__content {
+  margin-left: 0 !important;
 }
 .rciam_enrollers.nocert #banner {
   box-shadow: none;
@@ -107,33 +106,34 @@
   background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
 }
 
-.rciam_enrollers.configure table {
-  width: 105%;
+.rciam_enrollers.configure .eofsTable th, .rciam_enrollers.configure .eofsTable td {
+  background: inherit;
+  border-color: transparent;
 }
-.rciam_enrollers.configure table th, .rciam_enrollers.configure table td {
-  background: white;
+.rciam_enrollers.configure .eofsTable th label, .rciam_enrollers.configure .eofsTable td label {
   color: black;
 }
 .rciam_enrollers.configure #eof_list_btn {
-  background-color: green;
+  background: green;
   color: white;
   width: 80px;
 }
 .rciam_enrollers.configure #eof_list_btn:hover {
-  background-color: white;
+  background: white;
   border-color: green;
   color: green;
 }
 .rciam_enrollers.configure .deletebutton {
-  background-color: #cd0a0a;
+  background: #cd0a0a;
   color: white;
   width: 80px;
+  height: 3em;
 }
 .rciam_enrollers.configure .deletebutton .ui-button-icon.ui-icon {
   background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
 }
 .rciam_enrollers.configure .deletebutton:hover {
-  background-color: white;
+  background: white;
   border-color: #cd0a0a;
   color: #cd0a0a;
 }

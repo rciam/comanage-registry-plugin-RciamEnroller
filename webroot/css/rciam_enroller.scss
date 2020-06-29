@@ -88,10 +88,6 @@ $btn-blue: #0067B1;
  CSS Body
 */
 
-.mdl-layout__content {
-  margin-left: 0 !important;
-}
-
 @media (max-width: 739px) {
   #comanage-wrapper {
     min-height: unset;
@@ -124,6 +120,10 @@ $btn-blue: #0067B1;
     }
   }
 
+  .mdl-layout__content {
+    margin-left: 0 !important;
+  }
+
   @include frame($frame-width-nocert, $frame-main-pad-nocert);
 
   .field-info {
@@ -146,37 +146,40 @@ $btn-blue: #0067B1;
 }
 
 .rciam_enrollers.configure {
-  table {
-    width: 105%;
-    th, td {
-      background: white;
-      color: black;
+  .eofsTable {
+    th,td {
+      background: inherit;
+      border-color: transparent;
+      label {
+        color: black;
+      }
     }
   }
 
   #eof_list_btn {
-    background-color: green;
+    background: green;
     color: white;
     width: 80px;
 
     &:hover {
-      background-color: white;
+      background: white;
       border-color: green;
       color: green;
     }
   }
 
   .deletebutton {
-    background-color: $btn-red;
+    background: $btn-red;
     color: white;
     width: 80px;
+    height: 3em;
 
     .ui-button-icon.ui-icon {
       background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
     }
 
     &:hover {
-      background-color: white;
+      background: white;
       border-color: $btn-red;
       color: $btn-red;
 
