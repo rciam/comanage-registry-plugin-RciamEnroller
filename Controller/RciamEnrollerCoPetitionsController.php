@@ -17,9 +17,9 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
   private $redirect_location = "/";
 
   public $uses = array(
-    "CoEnrollmentFlow",
+    "RciamEnroller.RciamEnroller", // XXX There is a bug and this should go first
     "CoPetition", // this is mandatory for the enroller plugin
-    "RciamEnroller.RciamEnroller");
+    "CoEnrollmentFlow");
 
   /**
    * Enrollment Flow selectOrgIdentity (authenticate mode)
@@ -123,6 +123,12 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
     $this->redirect($onFinish);
   }
 
+  protected function execute_plugin_selectEnrollee($id, $onFinish)
+  {
+    // The step is done
+    $this->redirect($onFinish);
+  }
+
 
   /**
    * Authorization for this Controller, called by Auth component
@@ -135,33 +141,7 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
 
   function isAuthorized()
   {
-    $roles = $this->Role->calculateCMRoles();
-
-    $petitionId = $this->parseCoPetitionId();
-    $curToken = null;
-
-    // For self signup, we simply require a token (and for the token to match)
-    if ($petitionId) {
-      $curToken = $this->CoPetition->field('petitioner_token', array('CoPetition.id' => $this->parseCoPetitionId()));
-    }
-
-
-    // Construct the permission set for this user, which will also be passed to the view.
-    $p = array();
-
-    // Signup based collection, we need the user in the petition.
-    // Note we can't invalidate this token because for the duration of the enrollment
-    // $REMOTE_USER may or may not match a valid login identifier (though probably it should).
-    $p['start'] = ($curToken == $this->parseToken());
-    // Here we need a valid user
-    $p['petitionerAttributes'] = empty($this->Session->check('Auth.User')) ?
-      false :
-      $this->Session->check('Auth.User');
-
-    // Probably an account linking being initiated, so we need a valid user
-    $p['selectOrgIdentityAuthenticate'] = $roles['copersonid'];
-
-    $this->set('permissions', $p);
-    return $p[$this->action];
+    $authorized = parent::isAuthorized();
+    return $authorized;
   }
 }

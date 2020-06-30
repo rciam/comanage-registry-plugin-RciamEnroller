@@ -378,6 +378,26 @@ class RciamEnroller extends AppModel
     $args['contain'] = false;
     return $this->CoPerson->find('all', $args);
   }
+
+
+  /**
+   * Obtain the CO ID for a record, overriding AppModel behavior.
+   *
+   * @since  COmanage Registry v3.1.0
+   * @param  integer Record to retrieve for
+   * @return integer Corresponding CO ID, or NULL if record has no corresponding CO ID
+   * @throws InvalidArgumentException
+   * @throws RunTimeException
+   */
+
+  public function findCoForRecord($id) {
+    $this->log(__METHOD__ . "::@", LOG_DEBUG);
+    if(!empty($_SESSION["Auth"]["User"]["cos"])) {
+      $person_co_id = Hash::combine($_SESSION["Auth"]["User"]["cos"], '{s}.co_person_id', '{s}.co_id');
+      return $person_co_id[$_SESSION["Auth"]["User"]["co_person_id"]];
+    }
+    return parent::findCoForRecord($id);
+  }
 }
 
 
