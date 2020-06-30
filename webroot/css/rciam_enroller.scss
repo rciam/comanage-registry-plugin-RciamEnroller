@@ -161,7 +161,11 @@ $btn-blue: #0067B1;
     color: white;
     width: 80px;
 
-    &:hover {
+    &:disabled {
+      background: gray;
+    }
+
+    &:hover:enabled {
       background: white;
       border-color: green;
       color: green;

@@ -118,7 +118,10 @@
   color: white;
   width: 80px;
 }
-.rciam_enrollers.configure #eof_list_btn:hover {
+.rciam_enrollers.configure #eof_list_btn:disabled {
+  background: gray;
+}
+.rciam_enrollers.configure #eof_list_btn:hover:enabled {
   background: white;
   border-color: green;
   color: green;
