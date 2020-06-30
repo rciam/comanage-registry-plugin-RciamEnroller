@@ -115,6 +115,7 @@
 }
 .rciam_enrollers.configure #eof_list_btn {
   background: green;
+  border: 1px solid green;
   color: white;
   width: 80px;
 }
