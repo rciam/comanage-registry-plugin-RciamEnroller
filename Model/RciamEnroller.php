@@ -392,10 +392,24 @@ class RciamEnroller extends AppModel
 
   public function findCoForRecord($id) {
     $this->log(__METHOD__ . "::@", LOG_DEBUG);
+    // XXX The user is applying for a COU and is a member of the parent CO
     if(!empty($_SESSION["Auth"]["User"]["cos"])) {
       $person_co_id = Hash::combine($_SESSION["Auth"]["User"]["cos"], '{s}.co_person_id', '{s}.co_id');
       return $person_co_id[$_SESSION["Auth"]["User"]["co_person_id"]];
     }
+
+    // XXX if we are here it means that we are during a Sign up of a non CO user. Link the Petition model and search for the CO
+    $args = array();
+    $args['conditions']['CoPetition.id'] = $id;
+    $args['fields'] = array('co_id');
+    $args['contain'] = false;
+    $this->CoPetition = ClassRegistry::init('CoPetition');
+    $res = $this->CoPetition->find('first', $args);
+    if(!empty($res['CoPetition'])) {
+      return $res['CoPetition']['co_id'];
+    }
+
+    // XXX Go to AppModel and call the default
     return parent::findCoForRecord($id);
   }
 }
