@@ -12,6 +12,9 @@
 .rciam_enrollers.nocert #breadcrumbs {
   display: none;
 }
+.rciam_enrollers.nocert #desktop-hamburger {
+  display: none;
+}
 .rciam_enrollers.nocert #user-menu {
   display: none;
 }
@@ -95,7 +98,7 @@
 .rciam_enrollers.nocert .field-info {
   display: flex;
   align-content: center;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 .rciam_enrollers.nocert #return-btn:hover {
   background: #0067B1;

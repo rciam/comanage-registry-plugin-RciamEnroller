@@ -82,6 +82,7 @@ class AppSchema extends CakeSchema
     'status' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 1),
     'nocert_msg' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
     'return' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
+    'redirect_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 256),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'indexes' => array(

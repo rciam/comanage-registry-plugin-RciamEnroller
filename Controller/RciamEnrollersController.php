@@ -116,6 +116,11 @@ class RciamEnrollersController extends StandardController
 
     $this->set('vv_nocert_msg', $configData["RciamEnroller"]["nocert_msg"]);
     $this->set('vv_redirect_final', Router::url($redirect_final));
+
+    // Create the rout to the action, if specified
+    if(!empty($configData["RciamEnroller"]["redirect_url"])) {
+      $this->set('vv_redirect_action', $configData["RciamEnroller"]["redirect_url"]);
+    }
   }
 
   /**

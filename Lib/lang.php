@@ -26,7 +26,10 @@ $cm_rciam_enroller_texts['en_US'] = array(
   'pl.rciam_enroller.nocert_msg.desc'          => 'Optional text to display if no Certificate is available.',
   'pl.rciam_enroller.return_target'            => 'Return parameter',
   'pl.rciam_enroller.return_target.desc'       => 'This is the return query parameter with the Service URL. At the end of linking we will redirect at the url stored in this parameter.',
-  'pl.rciam_enroller.return'                   => 'Return',
+  'pl.rciam_enroller.redirect_url'             => 'Redirect URL',
+  'pl.rciam_enroller.redirect_url.desc'        => 'Specify a URL to redirect to if the action fails.',
+  'pl.rciam_enroller.return'                   => 'Return to Profile',
+  'pl.rciam_enroller.redirecturl'              => 'Get RCAuth Certificate',
   'pl.rciam_enroller.name_lbl'                 => 'Name:',
   'pl.rciam_enroller.action_lbl'               => 'Actions:',
 

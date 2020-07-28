@@ -286,7 +286,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
   <?php print _txt('ct.rciam_enroller.info'); ?>
 </div>
 <ul id="<?php print $this->action; ?>_rciam_enroller" class="fields form-list">
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.co_name'));?>">
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.co_name')));?>">
     <div class="field-name">
       <div class="field-title">
         <?php print _txt('pl.rciam_enroller.co_name'); ?>
@@ -330,7 +330,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       ?>
     </div>
   </li>
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.flow'));?>" style="display: flex !important;align-items: center;">
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.flow')));?>" style="display: flex !important;align-items: center;">
     <div class="field-name">
       <div class="field-title">
         <?php print _txt('pl.rciam_enroller.flow'); ?>
@@ -361,7 +361,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         </div>
     </div>
   </li>
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.nocert_msg'));?>" class="field-stack">
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.nocert_msg')));?>" class="field-stack">
     <div class="field-name">
       <div class="field-title">
         <?php print _txt('pl.rciam_enroller.nocert_msg'); ?>
@@ -376,7 +376,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       ?>
     </div>
   </li>
-  <li id="<?php print $this->Rciam->createIdProperty(_txt('pl.rciam_enroller.return_target'));?>">
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.return_target')));?>">
     <div class="field-name">
       <div class="field-title">
         <?php print _txt('pl.rciam_enroller.return_target'); ?>
@@ -391,7 +391,22 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       ?>
     </div>
   </li>
-  
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.redirect_url')));?>">
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rciam_enroller.redirect_url'); ?>
+      </div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.redirect_url.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php
+      $value = empty($rciam_enrollers['RciamEnroller']['redirect_url']) ? ""
+        : filter_var($rciam_enrollers['RciamEnroller']['redirect_url'],FILTER_SANITIZE_SPECIAL_CHARS) ;
+      print $this->Form->input('RciamEnroller.redirect_url', array('size' => 256, 'value' => $value));
+      ?>
+    </div>
+  </li>
+
   
   <?php if($e): ?>
     <li class="fields-submit">

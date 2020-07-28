@@ -50,6 +50,12 @@ class RciamEnroller extends AppModel
       'required' => false,
       'allowEmpty' => true
     ),
+    'redirect_url' => array(
+      'rule' => 'url',
+      'required' => false,
+      'allowEmpty' => true,
+      'message' => 'Please provide a valid URL. Include "http://" (or similar) for off-site links.'
+    ),
   );
 
   /**
