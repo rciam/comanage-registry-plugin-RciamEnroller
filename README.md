@@ -20,6 +20,7 @@ After the installation, you have to configure the plugin before using it.
 2. Configure the plugin
    * Status: Active
    * Enrollment Flow: Pick from the dropdown list the Enrollment Flow that the plugin will have affect upon
+     * This action can take place **ONLY** after you save you configuration for the first time.
    * Info Message-Cert: The message that will presented to the user if no Certificate is available
    * Return parameter: The query parameter name used to redirect the user to the end Service after Enrollment 
    * Redirect URL: A URL to redirect to after presented the Info View
