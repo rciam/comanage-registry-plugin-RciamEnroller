@@ -125,7 +125,7 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
                 // Remove the Empty valued option if available
                 $("#enrollments_list option[value='Empty']").remove();
                 $('#eof_list_btn').removeAttr("disabled");
-                generateLinkFlash("<?php print _txt('rs.link_org_identity_eof.deleted') ?>","success", 2000);
+                generateLinkFlash("<?php print _txt('rs.rciam_enroller_eof.deleted') ?>","success", 2000);
             },
             error: function(response) {
                 generateLinkFlash("Delete Failed","error", 2000);
