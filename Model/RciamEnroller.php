@@ -42,6 +42,16 @@ class RciamEnroller extends AppModel
     ),
     'nocert_msg' => array(
       'rule' => 'notBlank',
+      'required' => true,
+      'allowEmpty' => true
+    ),
+    'lowcert_msg' => array(
+      'rule' => 'notBlank',
+      'required' => true,
+      'allowEmpty' => true
+    ),
+    'vos_assurance_level' => array(
+      'rule' => '/.*/',
       'required' => false,
       'allowEmpty' => true
     ),
@@ -52,7 +62,13 @@ class RciamEnroller extends AppModel
     ),
     'redirect_url' => array(
       'rule' => 'url',
-      'required' => false,
+      'required' => true,
+      'allowEmpty' => true,
+      'message' => 'Please provide a valid URL. Include "http://" (or similar) for off-site links.'
+    ),
+    'low_redirect_url' => array(
+      'rule' => 'url',
+      'required' => true,
       'allowEmpty' => true,
       'message' => 'Please provide a valid URL. Include "http://" (or similar) for off-site links.'
     ),
@@ -131,11 +147,35 @@ class RciamEnroller extends AppModel
     $oargs['contain'][] = 'PrimaryName';
     $oargs['contain'][] = 'Identifier';
     $oargs['contain'][] = 'Cert';
+    $oargs['contain'][] = 'Assurance';
     $oargs['contain']['CoOrgIdentityLink']['CoPerson'][0] = 'Co';
     $oargs['contain']['CoOrgIdentityLink']['CoPerson'][1] = 'CoPersonRole';
     $oargs['contain']['CoOrgIdentityLink']['CoPerson']['CoGroupMember'] = 'CoGroup';
 
     return $this->OrgIdentity->find('all', $oargs);
+  }
+
+  /**
+   * @param  string       VO Minimum Assurance configuration
+   * @return array        parsed VO minimum assurance level configuration
+   */
+  public function parseAssurancePrereqConfig($config_value) {
+    if(empty($config_value)) {
+      return array();
+    }
+
+    $vo_entry = explode("\n", $config_value);
+    $vo_config = array();
+    foreach ($vo_entry as $ent) {
+      $vo_values = explode(':', $ent, 2);
+      $vo_assurance = explode('@', $vo_values[1]);
+      $vo_config[$vo_values[0]] = array(
+        'type' => $vo_assurance[0],
+        'value' => $vo_assurance[1],
+      );
+    }
+
+    return $vo_config;
   }
 
   /**
