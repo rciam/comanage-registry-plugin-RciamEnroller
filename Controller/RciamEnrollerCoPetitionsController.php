@@ -42,7 +42,8 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
     $args = array();
     $args['conditions']['CoEnrollmentFlow.id'] = $this->request->params['named']['coef'];
     $args['conditions'][] = 'not CoEnrollmentFlow.deleted';
-    $args['contain'] = array('CoEnrollmentAttribute');
+    $args['contain'][] = 'CoEnrollmentAttribute';
+    $args['contain']['CoEnrollmentAttribute'][] = 'CoEnrollmentAttributeDefault';
     $args['fields'] = array(
       'CoEnrollmentFlow.co_id',
       'CoEnrollmentFlow.name',
@@ -106,6 +107,67 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
           'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
         ];
         $this->redirect($nocert_redirect);
+      }
+      else {
+        // XXX Level of Assurance for the OrgIdentity used for Login
+        $org_list = Hash::extract($orgIdentities, '{n}.OrgIdentity.id');
+        $cert_list = Hash::combine($orgIdentities, '{n}.Cert.{n}.id', '{n}.Cert.{n}.subject', '{n}.Cert.{n}.org_identity_id');
+        $ident_list = Hash::combine($orgIdentities, '{n}.Identifier.{n}.id', '{n}.Identifier.{n}.identifier', '{n}.Identifier.{n}.org_identity_id');
+        $assurance_list = Hash::combine(
+          $orgIdentities,
+          '{n}.Assurance.{n}.id',
+          array( '%s@%s', '{n}.Assurance.{n}.type', '{n}.Assurance.{n}.value'),
+          '{n}.Assurance.{n}.org_identity_id');
+        $processed_list = array();
+        foreach( $org_list as $org_id) {
+          $processed_list[$org_id]['Cert'] = !empty($cert_list[$org_id]) ? $cert_list[$org_id] : array();
+          $processed_list[$org_id]['Identifier'] = !empty($ident_list[$org_id]) ? $ident_list[$org_id] : array();
+          $processed_list[$org_id]['Assurance'] = !empty($assurance_list[$org_id]) ? $assurance_list[$org_id] : array();
+        }
+        $processed_list_flatten = Hash::flatten($processed_list, '$$');
+        $org_key = array_search($_SESSION["Auth"]["external"]["user"], $processed_list_flatten);
+        $breadcrumbs = explode('$$', $org_key);
+        $current_org = $processed_list[$breadcrumbs[0]];
+
+        // XXX Get COU name associated with the Enrollment Flow
+        $cou_id_eof_attribute = Hash::extract($eof_ea, 'CoEnrollmentAttribute.{n}[attribute=r:cou_id].CoEnrollmentAttributeDefault.{n}.value');
+        $cou_name = "";
+        if(!empty($cou_id_eof_attribute)) {
+          $this->Cou = ClassRegistry::init('Cou');
+          $cou_name = $this->Cou->field("name",array('Cou.id' => (int)array_pop($cou_id_eof_attribute)));
+        }
+
+        // XXX Get the Assurance pre-requisites from the Configuration
+        $vos_assurance_prerquisite = !empty($loiecfg["RciamEnroller"]["vos_assurance_level"]) ? $loiecfg["RciamEnroller"]["vos_assurance_level"] : "";
+        $vo_config_list = $this->RciamEnroller->parseAssurancePrereqConfig($vos_assurance_prerquisite);
+
+        if(empty($current_org['Cert'])) {
+          // Only RCauth is available. Redirect on low
+          $lowcert_redirect = [
+            'controller' => 'rciam_enrollers',
+            'plugin' => Inflector::singularize(Inflector::tableize($this->plugin)),
+            'action' => 'lowcert',
+            'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
+          ];
+          $this->redirect($lowcert_redirect);
+        } elseif(!empty($vo_config_list[$cou_name])) {
+          // Check the assurance level
+          $assurace_prerequisite = implode("@", $vo_config_list[$cou_name]);
+          $available_assurance_values = array_values($current_org["Assurance"]);
+          if(in_array($assurace_prerequisite, $available_assurance_values)) {
+            // Everythin is ok. Redirect on Finish
+            $this->redirect($onFinish);
+          } else {
+            // Redirect on low
+            $lowcert_redirect = [
+              'controller' => 'rciam_enrollers',
+              'plugin' => Inflector::singularize(Inflector::tableize($this->plugin)),
+              'action' => 'lowcert',
+              'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
+            ];
+            $this->redirect($lowcert_redirect);
+          }
+        }
       }
     }
 

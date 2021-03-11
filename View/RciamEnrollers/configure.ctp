@@ -361,21 +361,6 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         </div>
     </div>
   </li>
-  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.nocert_msg')));?>" class="field-stack">
-    <div class="field-name">
-      <div class="field-title">
-        <?php print _txt('pl.rciam_enroller.nocert_msg'); ?>
-      </div>
-      <div class="field-desc"><?php print _txt('pl.rciam_enroller.nocert_msg.desc'); ?></div>
-    </div>
-    <div class="field-info">
-      <?php
-        $intro = empty($rciam_enrollers['RciamEnroller']['nocert_msg']) ? ""
-                : filter_var($rciam_enrollers['RciamEnroller']['nocert_msg'],FILTER_SANITIZE_SPECIAL_CHARS);
-        print $this->Form->textarea('RciamEnroller.nocert_msg', array('size' => 4000, 'value' => $intro));
-      ?>
-    </div>
-  </li>
   <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.return_target')));?>">
     <div class="field-name">
       <div class="field-title">
@@ -388,6 +373,21 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
         $value = empty($rciam_enrollers['RciamEnroller']['return']) ? ""
           : filter_var($rciam_enrollers['RciamEnroller']['return'],FILTER_SANITIZE_SPECIAL_CHARS) ;
         print $this->Form->input('RciamEnroller.return', array('size' => 50, 'value' => $value));
+      ?>
+    </div>
+  </li>
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.vos_assurance_level')));?>" class="field-stack">
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rciam_enroller.vos_assurance_level'); ?>
+      </div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.vos_assurance_level.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php
+      $vos_assurance_level = !empty($rciam_enrollers['RciamEnroller']['vos_assurance_level'])
+                             ? $rciam_enrollers['RciamEnroller']['vos_assurance_level'] : "";
+      print $this->Form->textarea('RciamEnroller.vos_assurance_level', array('size' => 4000, 'value' => $vos_assurance_level));
       ?>
     </div>
   </li>
@@ -405,6 +405,55 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       print $this->Form->input('RciamEnroller.redirect_url', array('size' => 256, 'value' => $value));
       ?>
     </div>
+    <ul class="field-children">
+      <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.nocert_msg')));?>" class="field-stack">
+        <div class="field-name">
+          <div class="field-title">
+            <?php print _txt('pl.rciam_enroller.nocert_msg'); ?>
+          </div>
+          <div class="field-desc"><?php print _txt('pl.rciam_enroller.nocert_msg.desc'); ?></div>
+        </div>
+        <div class="field-info">
+          <?php
+          $nocert_msg = empty($rciam_enrollers['RciamEnroller']['nocert_msg']) ? ""
+            : filter_var($rciam_enrollers['RciamEnroller']['nocert_msg'],FILTER_SANITIZE_SPECIAL_CHARS);
+          print $this->Form->textarea('RciamEnroller.nocert_msg', array('size' => 4000, 'value' => $nocert_msg));
+          ?>
+        </div>
+      </li>
+    </ul>
+  </li>
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.low_redirect_url')));?>">
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rciam_enroller.low_redirect_url'); ?>
+      </div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.low_redirect_url.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php
+      $value = empty($rciam_enrollers['RciamEnroller']['low_redirect_url']) ? ""
+        : filter_var($rciam_enrollers['RciamEnroller']['low_redirect_url'],FILTER_SANITIZE_SPECIAL_CHARS) ;
+      print $this->Form->input('RciamEnroller.low_redirect_url', array('size' => 256, 'value' => $value));
+      ?>
+    </div>
+    <ul class="field-children">
+      <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.lowcert_msg')));?>" class="field-stack">
+        <div class="field-name">
+          <div class="field-title">
+            <?php print _txt('pl.rciam_enroller.lowcert_msg'); ?>
+          </div>
+          <div class="field-desc"><?php print _txt('pl.rciam_enroller.lowcert_msg.desc'); ?></div>
+        </div>
+        <div class="field-info">
+          <?php
+          $lowcert_msg = empty($rciam_enrollers['RciamEnroller']['lowcert_msg']) ? ""
+            : filter_var($rciam_enrollers['RciamEnroller']['lowcert_msg'],FILTER_SANITIZE_SPECIAL_CHARS);
+          print $this->Form->textarea('RciamEnroller.lowcert_msg', array('size' => 4000, 'value' => $lowcert_msg));
+          ?>
+        </div>
+      </li>
+    </ul>
   </li>
 
   
