@@ -193,6 +193,7 @@ class RciamEnrollersController extends StandardController
     // Determine what operations this user can perform
     $p['configure'] = ($roles['cmadmin'] || $roles['coadmin']);
     $p['nocert'] = true;
+    $p['lowcert'] = true;
     $p['logout'] = true;
     $this->set('permissions', $p);
     
@@ -207,7 +208,8 @@ class RciamEnrollersController extends StandardController
   public function parseCOID($data = null) {
     if($this->action === 'configure'
        || $this->action === 'nocert'
-          || $this->action === 'logout') {
+       || $this->action === 'lowcert'
+       || $this->action === 'logout') {
       if(isset($this->request->params['named']['co'])) {
         return $this->request->params['named']['co'];
       }
