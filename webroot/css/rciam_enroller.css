@@ -6,105 +6,130 @@
     min-height: unset;
   }
 }
+.rciam_enrollers.lowcert #navigation-drawer,
 .rciam_enrollers.nocert #navigation-drawer {
   display: none;
 }
+.rciam_enrollers.lowcert #breadcrumbs,
 .rciam_enrollers.nocert #breadcrumbs {
   display: none;
 }
+.rciam_enrollers.lowcert #desktop-hamburger,
 .rciam_enrollers.nocert #desktop-hamburger {
   display: none;
 }
+.rciam_enrollers.lowcert #user-menu,
 .rciam_enrollers.nocert #user-menu {
   display: none;
 }
+.rciam_enrollers.lowcert #user-defined-links-top,
 .rciam_enrollers.nocert #user-defined-links-top {
   display: none;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #comanage-wrapper {
+  .rciam_enrollers.lowcert #comanage-wrapper,
+.rciam_enrollers.nocert #comanage-wrapper {
     min-height: 95vh;
   }
 }
+.rciam_enrollers.lowcert .mdl-layout__content,
 .rciam_enrollers.nocert .mdl-layout__content {
   margin-left: 0 !important;
 }
+.rciam_enrollers.lowcert #banner,
 .rciam_enrollers.nocert #banner {
   box-shadow: none;
   background-color: white;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #banner {
+  .rciam_enrollers.lowcert #banner,
+.rciam_enrollers.nocert #banner {
     background-color: unset;
   }
 }
+.rciam_enrollers.lowcert #banner .mdl-layout__header-row,
 .rciam_enrollers.nocert #banner .mdl-layout__header-row {
   height: 100%;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #banner .mdl-layout__header-row {
+  .rciam_enrollers.lowcert #banner .mdl-layout__header-row,
+.rciam_enrollers.nocert #banner .mdl-layout__header-row {
     background-color: white;
     width: 30% !important;
     margin: auto;
   }
 }
+.rciam_enrollers.lowcert #main,
 .rciam_enrollers.nocert #main {
   margin-left: 0 !important;
   color: black !important;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #main {
+  .rciam_enrollers.lowcert #main,
+.rciam_enrollers.nocert #main {
     padding: 0 0 0 0;
   }
 }
+.rciam_enrollers.lowcert #main #content,
 .rciam_enrollers.nocert #main #content {
   background-color: white;
   padding: unset;
 }
+.rciam_enrollers.lowcert #main #content .mdl-grid,
 .rciam_enrollers.nocert #main #content .mdl-grid {
   padding: unset;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #main #content {
+  .rciam_enrollers.lowcert #main #content,
+.rciam_enrollers.nocert #main #content {
     width: 30% !important;
     margin: auto;
   }
 }
+.rciam_enrollers.lowcert #main #content #content-inner,
 .rciam_enrollers.nocert #main #content #content-inner {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
+.rciam_enrollers.lowcert #main #content #content-inner .fields .modelbox,
 .rciam_enrollers.nocert #main #content #content-inner .fields .modelbox {
   overflow-wrap: anywhere;
   margin: 0.5em 1em 0 1em;
 }
+.rciam_enrollers.lowcert #customFooter,
 .rciam_enrollers.nocert #customFooter {
   padding: unset;
 }
+.rciam_enrollers.lowcert #customFooter .ssp-footer,
 .rciam_enrollers.nocert #customFooter .ssp-footer {
   background-color: white;
   padding: unset;
 }
 @media (min-width: 740px) {
-  .rciam_enrollers.nocert #customFooter .ssp-footer {
+  .rciam_enrollers.lowcert #customFooter .ssp-footer,
+.rciam_enrollers.nocert #customFooter .ssp-footer {
     width: 30% !important;
     margin: auto;
   }
 }
+.rciam_enrollers.lowcert #customFooter .ssp-footer .mdl-grid,
 .rciam_enrollers.nocert #customFooter .ssp-footer .mdl-grid {
   justify-content: center;
 }
+.rciam_enrollers.lowcert .field-info,
 .rciam_enrollers.nocert .field-info {
   display: flex;
   align-content: center;
   justify-content: space-evenly;
 }
+.rciam_enrollers.lowcert #return-btn:hover,
 .rciam_enrollers.nocert #return-btn:hover {
   background: #0067B1;
   color: white;
   border-color: #0067B1;
 }
+.rciam_enrollers.lowcert .ui-icon,
 .rciam_enrollers.nocert .ui-icon {
   background-image: url("/registry/js/jquery/jquery-ui-1.11.4.custom/images-comanage/ui-icons_ffffff_256x240.png");
 }

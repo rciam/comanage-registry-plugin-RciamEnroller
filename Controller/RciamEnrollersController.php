@@ -124,6 +124,38 @@ class RciamEnrollersController extends StandardController
   }
 
   /**
+   * Certificate with in-adequate Assurance level User message
+   *
+   * @since  COmanage Registry v3.1.0
+   */
+  public function lowcert() {
+    $configData = $this->RciamEnroller->getConfiguration($this->cur_co['Co']['id']);
+    $redirect_final = '/';
+    // Create the route to user's profile and redirect
+    if(!empty($_SESSION["Auth"]["User"]["co_person_id"])) {
+      $redirect_final = [
+        'controller' => 'co_people',
+        'plugin' => '',
+        'action' => 'canvas',
+        $_SESSION["Auth"]["User"]["co_person_id"],
+      ];
+    }
+    if (empty($configData["RciamEnroller"]["lowcert_msg"])) {
+      $this->Flash->set(_txt('er.rciam_enroller.low_cert', array(_txt('ct.rciam_enrollers.2'))), array('key' => 'error'));
+      // If no CO Person ID in the Session redirect to root
+      $this->redirect($redirect_final);
+    }
+
+    $this->set('vv_lowcert_msg', $configData["RciamEnroller"]["lowcert_msg"]);
+    $this->set('vv_redirect_final', Router::url($redirect_final));
+
+    // Create the rout to the action, if specified
+    if(!empty($configData["RciamEnroller"]["low_redirect_url"])) {
+      $this->set('vv_redirect_action', $configData["RciamEnroller"]["low_redirect_url"]);
+    }
+  }
+
+  /**
    *
    */
   public function beforeRender()
@@ -161,6 +193,7 @@ class RciamEnrollersController extends StandardController
     // Determine what operations this user can perform
     $p['configure'] = ($roles['cmadmin'] || $roles['coadmin']);
     $p['nocert'] = true;
+    $p['lowcert'] = true;
     $p['logout'] = true;
     $this->set('permissions', $p);
     
@@ -175,7 +208,8 @@ class RciamEnrollersController extends StandardController
   public function parseCOID($data = null) {
     if($this->action === 'configure'
        || $this->action === 'nocert'
-          || $this->action === 'logout') {
+       || $this->action === 'lowcert'
+       || $this->action === 'logout') {
       if(isset($this->request->params['named']['co'])) {
         return $this->request->params['named']['co'];
       }

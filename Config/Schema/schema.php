@@ -81,8 +81,11 @@ class AppSchema extends CakeSchema
     'co_id' => array('type' => 'integer', 'null' => true, 'default' => null),
     'status' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 1),
     'nocert_msg' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
+    'lowcert_msg' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
+    'vos_assurance_level' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 4000),
     'return' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
     'redirect_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 256),
+    'low_redirect_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 256),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'indexes' => array(
