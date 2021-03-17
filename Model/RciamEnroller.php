@@ -167,6 +167,7 @@ class RciamEnroller extends AppModel
     $vo_entry = explode("\n", $config_value);
     $vo_config = array();
     foreach ($vo_entry as $ent) {
+      $ent = trim($ent);
       $vo_values = explode(':', $ent, 2);
       $vo_assurance = explode('@', $vo_values[1]);
       $vo_config[$vo_values[0]] = array(
