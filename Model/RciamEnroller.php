@@ -173,10 +173,33 @@ class RciamEnroller extends AppModel
       $vo_config[$vo_values[0]] = array(
         'type' => $vo_assurance[0],
         'value' => $vo_assurance[1],
+        'implode' => $vo_values[1],
       );
     }
 
     return $vo_config;
+  }
+
+  /**
+   * @param $level
+   * @return int
+   */
+  public function assuranceValueOrder($level) {
+    // Undefined value leve
+    if(empty($level)) {
+      return -1;
+    }
+    // Non recognized level in order array
+    if(empty($order[$level])) {
+      return -1;
+    }
+
+    $order = array(
+      'profile@https://aai.egi.eu/LoA#Low' => 1,
+      'profile@https://aai.egi.eu/LoA#Substantial' => 2,
+    );
+
+    return $order[$level];
   }
 
   /**
