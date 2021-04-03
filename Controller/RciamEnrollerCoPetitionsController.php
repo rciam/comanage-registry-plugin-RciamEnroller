@@ -111,8 +111,20 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
       else {
         // XXX Level of Assurance for the OrgIdentity used for Login
         $org_list = Hash::extract($orgIdentities, '{n}.OrgIdentity.id');
-        $cert_list = Hash::combine($orgIdentities, '{n}.Cert.{n}.id', '{n}.Cert.{n}.subject', '{n}.Cert.{n}.org_identity_id');
-        $ident_list = Hash::combine($orgIdentities, '{n}.Identifier.{n}.id', '{n}.Identifier.{n}.identifier', '{n}.Identifier.{n}.org_identity_id');
+        $cert_list = Hash::combine(
+          $orgIdentities,
+          '{n}.Cert.{n}.id',
+          array( '%s@separator@%s@separator@%d',
+            '{n}.Cert.{n}.subject',
+            '{n}.Cert.{n}.issuer',
+            '{n}.Cert.{n}.ordr'),
+          '{n}.Cert.{n}.org_identity_id'
+        );
+        $ident_list = Hash::combine(
+          $orgIdentities,
+          '{n}.Identifier.{n}.id',
+          '{n}.Identifier.{n}.identifier',
+          '{n}.Identifier.{n}.org_identity_id');
         $assurance_list = Hash::combine(
           $orgIdentities,
           '{n}.Assurance.{n}.id',
@@ -124,10 +136,35 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
           $processed_list[$org_id]['Identifier'] = !empty($ident_list[$org_id]) ? $ident_list[$org_id] : array();
           $processed_list[$org_id]['Assurance'] = !empty($assurance_list[$org_id]) ? $assurance_list[$org_id] : array();
         }
-        $processed_list_flatten = Hash::flatten($processed_list, '$$');
-        $org_key = array_search($_SESSION["Auth"]["external"]["user"], $processed_list_flatten);
-        $breadcrumbs = explode('$$', $org_key);
-        $current_org = $processed_list[$breadcrumbs[0]];
+
+        // Explode certificate information
+        foreach($processed_list as $org_id => $orgid_models) {
+          if(!empty($orgid_models['Cert'])) {
+            foreach($orgid_models['Cert'] as $certid => $denseval) {
+              list($subjectex, $issuerex, $ordrex) = explode('@separator@', $denseval);
+              $processed_list[$org_id]['Cert'][$certid] = array(
+                'issuer' => $issuerex,
+                'subject' => $subjectex,
+                'ordr' => (int)$ordrex,
+              );
+            }
+          }
+        }
+
+        // Order paths according to Certificate Ordering
+        $flattened_proc_list = Hash::flatten($processed_list);
+        $ordering_flatten = array_filter(
+          $flattened_proc_list,
+          function ($value, $key) {
+            return (strpos($key, '.ordr') !== false);
+          },
+          ARRAY_FILTER_USE_BOTH
+        );
+        asort($ordering_flatten);
+
+        // XXX Get the Assurance pre-requisites from the Configuration
+        $vos_assurance_prerquisite = !empty($loiecfg["RciamEnroller"]["vos_assurance_level"]) ? $loiecfg["RciamEnroller"]["vos_assurance_level"] : "";
+        $vo_config_list = $this->RciamEnroller->parseAssurancePrereqConfig($vos_assurance_prerquisite);
 
         // XXX Get COU name associated with the Enrollment Flow
         $cou_id_eof_attribute = Hash::extract($eof_ea, 'CoEnrollmentAttribute.{n}[attribute=r:cou_id].CoEnrollmentAttributeDefault.{n}.value');
@@ -136,12 +173,52 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
           $this->Cou = ClassRegistry::init('Cou');
           $cou_name = $this->Cou->field("name",array('Cou.id' => (int)array_pop($cou_id_eof_attribute)));
         }
+        // Get the required assurance level from the configuration
+        $config_required_assurance = $vo_config_list[$cou_name]['implode'];
 
-        // XXX Get the Assurance pre-requisites from the Configuration
-        $vos_assurance_prerquisite = !empty($loiecfg["RciamEnroller"]["vos_assurance_level"]) ? $loiecfg["RciamEnroller"]["vos_assurance_level"] : "";
-        $vo_config_list = $this->RciamEnroller->parseAssurancePrereqConfig($vos_assurance_prerquisite);
+        // XXX Iterate over OrgIdentities and get the first which:
+        // * assurane level matches the level requested by the configuration
+        // * Has a certificate
+        // Store the orgId into a variable in order to use below
+        $issuer = null;
+        $subject = null;
+        $org_id_picked = null;
+        $cert_id_picked = null;
+        foreach($ordering_flatten as $path => $order) {
+          $full_path = Hash::expand(array($path => $order));
+          $org_id = key($full_path);
+          $cert_id = key($full_path[$org_id]['Cert']);
+          $orgid_models = $processed_list[$org_id];
+          $has_assurance = in_array($config_required_assurance, $orgid_models['Assurance']) ? true : false;
 
-        if(empty($current_org['Cert'])) {
+          if(!$has_assurance
+            && $this->RciamEnroller->assuranceValueOrder($config_required_assurance) > 0
+            && $this->RciamEnroller->assuranceValueOrder($orgid_models['Assurance']) > 0 ) {
+            $required_assurance_order = $this->RciamEnroller->assuranceValueOrder($config_required_assurance);
+            $org_assurance_order = $this->RciamEnroller->assuranceValueOrder($orgid_models['Assurance']);
+            if($org_assurance_order >= $required_assurance_order) {
+              $has_assurance = true;
+            }
+          }
+          $has_certificate = false;
+
+          if(!empty($processed_list[$org_id]['Cert'])) {
+            $certificate = $processed_list[$org_id]['Cert'][$cert_id];
+            if(!empty($certificate['subject'])
+              && !empty($certificate['issuer'])) {
+              $has_certificate = true;
+            }
+          }
+          if($has_assurance && $has_certificate) {
+            $issuer = $certificate['issuer'];
+            $subject = $certificate['subject'];
+            $org_id_picked = $org_id;
+            $cert_id_picked = $cert_id;
+            break;
+          }
+        }
+
+        if(is_null($issuer) || is_null($subject)) {
           // Only RCauth is available. Redirect on low
           $lowcert_redirect = [
             'controller' => 'rciam_enrollers',
@@ -150,23 +227,9 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
             'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
           ];
           $this->redirect($lowcert_redirect);
-        } elseif(!empty($vo_config_list[$cou_name])) {
-          // Check the assurance level
-          $assurace_prerequisite = implode("@", $vo_config_list[$cou_name]);
-          $available_assurance_values = array_values($current_org["Assurance"]);
-          if(in_array($assurace_prerequisite, $available_assurance_values)) {
-            // Everythin is ok. Redirect on Finish
-            $this->redirect($onFinish);
-          } else {
-            // Redirect on low
-            $lowcert_redirect = [
-              'controller' => 'rciam_enrollers',
-              'plugin' => Inflector::singularize(Inflector::tableize($this->plugin)),
-              'action' => 'lowcert',
-              'co' => (int)$eof_ea['CoEnrollmentFlow']['co_id'],
-            ];
-            $this->redirect($lowcert_redirect);
-          }
+        } else {
+          // Everythin is ok. Redirect on Finish
+          $this->redirect($onFinish);
         }
       }
     }
