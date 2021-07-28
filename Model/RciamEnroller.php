@@ -66,6 +66,9 @@ class RciamEnroller extends AppModel
       'allowEmpty' => true,
       'message' => 'Please provide a valid URL. Include "http://" (or similar) for off-site links.'
     ),
+    'duplicate_mode' => array(
+      'rule' => 'boolean'
+    ),
     'low_redirect_url' => array(
       'rule' => 'url',
       'required' => true,
@@ -276,15 +279,36 @@ class RciamEnroller extends AppModel
 
     return null;
   }
+  
+  /**
+   * getPetitionsByCoPersonIdAndEnrollemntFlow
+   *
+   * @param  Integer $co_person_id
+   * @param  Integer $eof_id
+   * @return Array 
+   */
+  public function getPetitionsByCoPersonIdAndEnrollemntFlow($co_person_id, $eof_id) {
+    $args = array();
+    $args['conditions']['NOT']['CoPetition.status'] = PetitionStatusEnum::Finalized;
+    $args['conditions']['CoPetition.enrollee_co_person_id'] = $co_person_id;
+    $args['conditions']['CoPetition.deleted'] = FALSE;
+    $args['conditions'][0] = 'CoPetition.co_petition_id IS NULL';
+    $args['conditions']['CoPetition.co_enrollment_flow_id'] = $eof_id;
+    $args['fields'] = array('CoPetition.id');
+    $args['contain'] = false;
+    $this->CoPetition = ClassRegistry::init('CoPetition');
+    $petition = $this->CoPetition->find('first', $args);
+    return $petition;
+  }
 
   /**
    * @param Integer $co_id
-   * @param boolean $non_cou
+   * @param boolean $include_cou (NULL: return ALL, False: return only CO EOFs, True: return only COU EOFs)
    * @return mixed
    */
-  public function getEnrollmentFlows($co_id, $non_cou = false)
+  public function getEnrollmentFlows($co_id, $include_cou = NULL)
   {
-    if ($non_cou) {
+    if(!is_null($include_cou)) {
       // I exclude all the EOF that refer to COU enrollment
       $this->CoEnrollmentAttribute = ClassRegistry::init('CoEnrollmentAttribute');
       $args = array();
@@ -299,9 +323,13 @@ class RciamEnroller extends AppModel
     $args['conditions']['CoEnrollmentFlow.co_id'] = $co_id;
     $args['conditions']['CoEnrollmentFlow.deleted'] = false;
     $args['conditions']['CoEnrollmentFlow.status'] = EnrollmentFlowStatusEnum::Active;
-    if ($non_cou) {
+    if(!is_null($include_cou) && $include_cou == FALSE) {
       // Get the enrollment flows from the current CO filtered out from the COUs
       $args['conditions']['NOT']['CoEnrollmentFlow.id'] = $cou_eof;
+    }
+    else if(!is_null($include_cou) && $include_cou) {
+      // Get only COU enrollment flows
+      $args['conditions']['CoEnrollmentFlow.id IN'] = $cou_eof;
     }
     $args['fields'] = array('CoEnrollmentFlow.id', 'CoEnrollmentFlow.name');
     $args['contain'] = false;

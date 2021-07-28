@@ -54,7 +54,26 @@ class RciamEnrollerCoPetitionsController extends CoPetitionsController
 
     // Get the configuration
     $loiecfg = $this->RciamEnroller->getConfiguration($eof_ea['CoEnrollmentFlow']['co_id']);
-
+    if($loiecfg['RciamEnroller']['forbid_duplicate_eof']) {
+      $cou_eofs = $this->RciamEnroller->getEnrollmentFlows($eof_ea['CoEnrollmentFlow']['co_id'], true);
+      //If Enrollement flow is a COU Enrollment flow
+      if(array_key_exists($this->request->params['named']['coef'], $cou_eofs)) {
+        // Get the petition(s) of this EOF
+        $petition = $this->RciamEnroller->getPetitionsByCoPersonIdAndEnrollemntFlow($_SESSION["Auth"]["User"]["co_person_id"], $this->request->params['named']['coef']);
+  
+        // If petition already exists then redirect user to another page
+        if(!empty($petition)) {
+          // Redirect to petition page
+          $petition_redirect = [
+            'controller' => 'co_petitions',
+            'plugin' => null,
+            'action' => 'view/',
+            $petition['CoPetition']['id']
+          ];
+          $this->redirect($petition_redirect);  
+        }
+      }
+    }
     /*
      * Redirect onFinish, in the case that the plugin is:
      * 1. disabled
