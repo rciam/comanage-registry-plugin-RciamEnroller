@@ -12,6 +12,7 @@
     <field name="return" type="C" size="50" />
     <field name="low_redirect_url" type="C" size="256" />
     <field name="redirect_url" type="C" size="256" />
+    <field name="forbid_duplicate_eof" type="L" />
     <field name="nocert_msg" type="X" size="4000" />
     <field name="lowcert_msg" type="X" size="4000" />
     <field name="vos_assurance_level" type="X" size="4000" />

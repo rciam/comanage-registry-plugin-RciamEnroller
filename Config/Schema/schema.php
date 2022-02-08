@@ -86,6 +86,7 @@ class AppSchema extends CakeSchema
     'return' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
     'redirect_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 256),
     'low_redirect_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 256),
+    'forbid_duplicate_eof' => array('type' => 'boolean', 'null'=> false, 'default'=> false),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'indexes' => array(

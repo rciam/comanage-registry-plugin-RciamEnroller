@@ -455,7 +455,20 @@ print $this->Html->css('/RciamEnroller/css/rciam_enroller');
       </li>
     </ul>
   </li>
-
+  <li id="<?php print Inflector::slug(strtolower(_txt('pl.rciam_enroller.forbid_duplicate_eof')));?>">
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rciam_enroller.forbid_duplicate_eof'); ?>
+      </div>
+      <div class="field-desc"><?php print _txt('pl.rciam_enroller.forbid_duplicate_eof.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php
+      $checked = empty($rciam_enrollers['RciamEnroller']['forbid_duplicate_eof']) ? false : true;
+      print $this->Form->input('RciamEnroller.forbid_duplicate_eof', array('size' => 256, 'type' => 'checkbox', 'checked' => $checked));
+      ?>
+    </div>
+  </li>
   
   <?php if($e): ?>
     <li class="fields-submit">

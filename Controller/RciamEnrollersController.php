@@ -90,7 +90,6 @@ class RciamEnrollersController extends StandardController
     }
   }
 
-
   /**
    * No Certificate User message
    *
